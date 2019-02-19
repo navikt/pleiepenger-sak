@@ -33,7 +33,7 @@ class PleiepengerJoarkTest {
 
         private val wireMockServer: WireMockServer = WiremockWrapper.bootstrap()
         private val objectMapper = ObjectMapper.server()
-        private val accessToken = Authorization.getAccessToken(wireMockServer.baseUrl(), wireMockServer.getSubject())
+        private val authorizedAccessToken = Authorization.getAccessToken(wireMockServer.baseUrl(), wireMockServer.getSubject())
 
         fun getConfig() : ApplicationConfig {
             val fileConfig = ConfigFactory.load()
@@ -117,13 +117,43 @@ class PleiepengerJoarkTest {
         )
     }
 
+    @Test
+    fun `mangler authorization header`() {
+        val request = MeldingV1(
+            aktoerId = "123456789"
+        )
+
+        requestAndAssert(
+            request = request,
+            leggTilAuthorization = false,
+            expectedCode = HttpStatusCode.Unauthorized
+        )
+    }
+
+    @Test
+    fun `request fra ikke tillatt system`() {
+        val request = MeldingV1(
+            aktoerId = "123456789"
+        )
+
+        requestAndAssert(
+            request = request,
+            expectedCode = HttpStatusCode.Unauthorized,
+            accessToken = Authorization.getAccessToken(wireMockServer.baseUrl(), "srvnotauthorized")
+        )
+    }
+
     private fun requestAndAssert(request : MeldingV1,
                                  expectedResponse : SakResponse? = null,
                                  expectedCode : HttpStatusCode? = null,
-                                 medCorrelationId : Boolean = true) {
+                                 medCorrelationId : Boolean = true,
+                                 leggTilAuthorization : Boolean = true,
+                                 accessToken : String = authorizedAccessToken) {
         with(engine) {
             handleRequest(HttpMethod.Post, "/v1/sak") {
-                addHeader(HttpHeaders.Authorization, "Bearer $accessToken")
+                if (leggTilAuthorization) {
+                    addHeader(HttpHeaders.Authorization, "Bearer $accessToken")
+                }
                 if (medCorrelationId) {
                     addHeader(HttpHeaders.XCorrelationId, "123156")
                 }
@@ -131,7 +161,9 @@ class PleiepengerJoarkTest {
                 setBody(objectMapper.writeValueAsString(request))
             }.apply {
                 assertEquals(expectedCode, response.status())
-                assertEquals(expectedResponse, objectMapper.readValue(response.content!!))
+                if (expectedResponse != null) {
+                    assertEquals(expectedResponse, objectMapper.readValue(response.content!!))
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ private const val jwkSetPath = "/auth-mock/jwk-set"
 private const val tokenPath = "/auth-mock/token"
 private const val getAccessTokenPath = "/auth-mock/get-test-access-token"
 private const val sakPath = "/sak-mock"
-private const val subject = "srvpleiepenger-pro"
+private const val subject = "srvpps-prosessering"
 
 
 object WiremockWrapper {

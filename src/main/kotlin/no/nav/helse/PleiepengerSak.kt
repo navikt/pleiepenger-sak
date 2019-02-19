@@ -35,6 +35,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 private val logger: Logger = LoggerFactory.getLogger("nav.PleiepengerSak")
+private const val GENERATED_REQUEST_ID_PREFIX = "generated-"
 
 fun main(args: Array<String>): Unit  = io.ktor.server.netty.EngineMain.main(args)
 
@@ -79,12 +80,12 @@ fun Application.pleiepengerSak() {
             verifier(jwkProvider, configuration.getIssuer())
             realm = "pleiepenger-sak"
             validate { credentials ->
-                log.info("authorization attempt for ${credentials.payload.subject}")
+                logger.info("authorization attempt for ${credentials.payload.subject}")
                 if (credentials.payload.subject in authorizedSystems) {
                     log.info("authorization ok")
                     return@validate JWTPrincipal(credentials.payload)
                 }
-                log.warn("authorization failed")
+                logger.warn("authorization failed")
                 return@validate null
             }
         }
@@ -114,18 +115,17 @@ fun Application.pleiepengerSak() {
 
     install(Routing) {
         authenticate {
-
-        }
-        // TODO: Legg til under authenticate når vi får testet gjennom
-        sakApis(
-            sakV1Service = SakV1Service(
-                sakGateway = SakGateway(
-                    httpClient = sakHttpClient,
-                    sakBaseUrl = configuration.getSakBaseUrl(),
-                    systembrukerService = systembrukerService
+            sakApis(
+                sakV1Service = SakV1Service(
+                    sakGateway = SakGateway(
+                        httpClient = sakHttpClient,
+                        sakBaseUrl = configuration.getSakBaseUrl(),
+                        systembrukerService = systembrukerService
+                    )
                 )
             )
-        )
+        }
+
         monitoring(
             collectorRegistry = collectorRegistry
         )
@@ -138,7 +138,7 @@ fun Application.pleiepengerSak() {
     install(CallLogging) {
         callIdMdc("correlation_id")
         mdc("request_id") { call ->
-            val requestId = call.request.header(HttpHeaders.XRequestId) ?: "generated-${UUID.randomUUID()}"
+            val requestId = call.request.header(HttpHeaders.XRequestId)?.removePrefix(GENERATED_REQUEST_ID_PREFIX) ?: "$GENERATED_REQUEST_ID_PREFIX${UUID.randomUUID()}"
             call.response.header(HttpHeaders.XRequestId, requestId)
             requestId
         }

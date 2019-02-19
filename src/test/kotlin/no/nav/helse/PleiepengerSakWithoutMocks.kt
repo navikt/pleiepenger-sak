@@ -26,7 +26,7 @@ class PleiepengerSakWithoutMocks {
                 tokenUrl = "https://security-token-service.nais.preprod.local/rest/v1/sts/token",
                 jwkSetUrl = "https://security-token-service.nais.preprod.local/rest/v1/sts/jwks",
                 issuer = "https://security-token-service.nais.preprod.local",
-                authorizedSystems = "srvpleiepenger-sak",
+                authorizedSystems = "srvpleiepenger-sak,srvpps-prosessering",
                 sakBaseUrl = "https://sak.nais.preprod.local"
             ))
 
