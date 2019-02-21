@@ -26,7 +26,7 @@ import kotlin.test.*
 private val logger: Logger = LoggerFactory.getLogger("nav.PleiepengerSakTest")
 
 @KtorExperimentalAPI
-class PleiepengerJoarkTest {
+class PleiepengerSakTest {
 
     @KtorExperimentalAPI
     private companion object {
