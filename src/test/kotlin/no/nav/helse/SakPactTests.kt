@@ -27,7 +27,6 @@ import java.net.URL
 import java.util.*
 import kotlin.test.assertEquals
 
-
 private const val provider = "sak"
 private const val consumer = "pleiepenger-sak"
 private const val jwt = "eyJraWQiOiJhN2YzMTI1YS1hYTY4LTRjOTItYWVmNy01OTcwNGZjNTVjOWYiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJzcnZwbGVpZXBlbmdlci1zYWsiLCJhdWQiOlsic3J2cGxlaWVwZW5nZXItc2FrIiwicHJlcHJvZC5sb2NhbCJdLCJ2ZXIiOiIxLjAiLCJuYmYiOjE1NTEyNzA5NjMsImF6cCI6InNydnBsZWllcGVuZ2VyLXNhayIsImlkZW50VHlwZSI6IlN5c3RlbXJlc3N1cnMiLCJhdXRoX3RpbWUiOjE1NTEyNzA5NjMsImlzcyI6Imh0dHBzOlwvXC9zZWN1cml0eS10b2tlbi1zZXJ2aWNlLm5haXMucHJlcHJvZC5sb2NhbCIsImV4cCI6MTU1MTI3NDU2MywiaWF0IjoxNTUxMjcwOTYzLCJqdGkiOiJiY2M1NGVjOS05ZGU1LTRiOGQtYjRlZi1kMjY0NTQxZDBiZWQifQ.dqW2eWzFrkwIpLqP_k5PA6wA1hlaaWV9MbtpZMWJHn01ar5hTPDulAY__Rm1WoB33t3ucqaO_dLcWC6ISBfNIkd9wmb590Aa57D8OcDNwp9D4qPnXczqD3VD5nMspvf4bfztvWxf3MvHYlZX5J9QILedYk1Qx2Mb-epBQRjbCOKtykCwckUvcTFYqflfVbi8-9mhtSGUYO_zdPL-lbvUSDDwyVfXGsVmjabiCVTo46NCcQotHxWxV3OrtojdNyh_RZNEWrt8QubC3WbxcOiZnoX-9D0JMqng6WXFbXoypj_VnErVlAJObLKOtzJA7l3kfJ9cdZEt547i2j97oz360Q"
@@ -61,7 +60,8 @@ class SakPactTests {
         logger.info("Body=$body")
         val headers = mapOf(
             Pair(HttpHeaders.ContentType, "application/json"),
-            Pair(HttpHeaders.Accept, "application/json")
+            Pair(HttpHeaders.Accept, "application/json"),
+            Pair(HttpHeaders.Authorization, "Bearer $jwt")
         )
 
         return builder
@@ -70,11 +70,6 @@ class SakPactTests {
             .path("/api/v1/saker")
             .method("POST")
             .headers(headers)
-            .matchHeader(
-                HttpHeaders.Authorization,
-                "Bearer [A-Za-z0-9-_=]{50,}\\.[A-Za-z0-9-_=]{100,}\\.[A-Za-z0-9-_=]{100,}",
-                jwt
-            )
             .matchHeader(
                 HttpHeaders.XCorrelationId,
                 "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b"
