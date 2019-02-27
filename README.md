@@ -30,6 +30,22 @@ Request ID blir ikke propagert videre, og skal ha sitt opphav hos konsumenten
 - Request ID kan sendes som header til meldingen med navn 'X-Correlation-Id'
 - Versjon på meldingen må sendes som header til meldingen med navn 'X-Nav-Message-Version'
 
+## Pact
+Når testene kjøres genereres en fil under 'pacts/pleiepenger-sak-sak.json'.
+Denne brukes av provider (sak) ved å bruke URL på GitHub.
+Per nå lastes det ikke opp til en pact broker, men er oppsett for å gjøre dette;
+
+```shell
+echo "Optional om broker kun kan nås via proxy"
+export PACT_BROKER_PROXY_HOST=
+export PACT_BROKER_PROXY_PORT=
+echo "Må settes ved publish til broker"
+export PACT_BROKER_URL=
+export PACT_BROKER_USERNAME=
+export PACT_BROKER_PASSWORD=
+./gradlew pactPublish
+```
+
 ## For NAV-ansatte
 
 Interne henvendelser kan sendes via Slack i kanalen #område-helse.
