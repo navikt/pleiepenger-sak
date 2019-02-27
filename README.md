@@ -32,7 +32,7 @@ Request ID blir ikke propagert videre, og skal ha sitt opphav hos konsumenten
 
 ## Pact
 Når testene kjøres genereres en fil under 'pacts/pleiepenger-sak-sak.json'.
-Denne brukes av provider (sak) ved å bruke URL på GitHub.
+Denne brukes av provider (sak) ved å bruke URL på GitHub (https://github.com/navikt/pleiepenger-sak/blob/master/pacts/pleiepenger-sak-sak.json)
 Per nå lastes det ikke opp til en pact broker, men er oppsett for å gjøre dette;
 
 ```shell
