@@ -42,12 +42,12 @@ class SakPactTests {
     val mockProvider = PactProviderRuleMk2(provider, this)
 
     init {
-        System.setProperty("pact.rootDir","${System.getProperty("user.dir")}/pacts")
+        System.setProperty("pact.rootDir", "${System.getProperty("user.dir")}/pacts")
     }
 
     @Pact(consumer = consumer)
     @SuppressWarnings("unused")
-    fun oppretteSakPact(builder : PactDslWithProvider) : RequestResponsePact {
+    fun oppretteSakPact(builder: PactDslWithProvider): RequestResponsePact {
         val body = """
         {
             "tema" : "OMS",
@@ -70,18 +70,26 @@ class SakPactTests {
             .path("/api/v1/saker")
             .method("POST")
             .headers(headers)
-            .matchHeader(HttpHeaders.Authorization, "Bearer [A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$")
-            .matchHeader(HttpHeaders.XCorrelationId, "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b")
+            .matchHeader(
+                HttpHeaders.Authorization,
+                "Bearer [A-Za-z0-9-_=]{50,}\\.[A-Za-z0-9-_=]{100,}\\.[A-Za-z0-9-_=]{100,}",
+                jwt
+            )
+            .matchHeader(
+                HttpHeaders.XCorrelationId,
+                "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b"
+            )
             .body(body)
             .willRespondWith()
             .headers(mapOf(Pair(HttpHeaders.ContentType, "application/json")))
             .status(201)
             .body(
-            """
+                """
                 {
                     "id": "$sakId"
                 }
-            """.trimIndent())
+            """.trimIndent()
+            )
             .toPact()
     }
 
@@ -92,20 +100,24 @@ class SakPactTests {
         runBlocking {
             val actualSakId = sakService.opprettSak(
                 melding = MeldingV1(aktoerId = aktoerId),
-                metaData = MetadataV1(version = 1, correlationId = UUID.randomUUID().toString(), requestId = UUID.randomUUID().toString())
+                metaData = MetadataV1(
+                    version = 1,
+                    correlationId = UUID.randomUUID().toString(),
+                    requestId = UUID.randomUUID().toString()
+                )
             )
             assertEquals(sakId, actualSakId.value)
         }
     }
 
-    private fun sakService() : SakV1Service {
+    private fun sakService(): SakV1Service {
         return SakV1Service(sakGateway = sakGateway())
     }
 
-    private fun sakGateway() : SakGateway {
+    private fun sakGateway(): SakGateway {
         val httpClient = HttpClient(Apache) {
             install(JsonFeature) {
-                serializer = JacksonSerializer{ ObjectMapper.sak(this) }
+                serializer = JacksonSerializer { ObjectMapper.sak(this) }
             }
         }
 
@@ -118,19 +130,18 @@ class SakPactTests {
         )
     }
 
-    private fun mockSystembrukerGateway() : SystembrukerGateway {
+    private fun mockSystembrukerGateway(): SystembrukerGateway {
         val mock = Mockito.mock(SystembrukerGateway::class.java)
         runBlocking {
-            Mockito.`when`(mock.getToken()).thenReturn(Response(
-                accessToken = jwt,
-                expiresIn = 5000
-            ))
+            Mockito.`when`(mock.getToken()).thenReturn(
+                Response(
+                    accessToken = jwt,
+                    expiresIn = 5000
+                )
+            )
         }
         return mock
     }
-
-
 }
-
 
 

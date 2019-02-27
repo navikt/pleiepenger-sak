@@ -79,14 +79,12 @@ pact {
             System.setProperty("https.proxyPort", proxyPort)
         }
 
-        if (brokerUrl.isNullOrBlank() || brokerUsername.isNullOrBlank() || brokerPassword.isNullOrBlank()) {
-            throw GradleException("brokerUrl, brokerUsername og brokerPassword må settes.")
+        if (!brokerUrl.isNullOrBlank() && !brokerUsername.isNullOrBlank() && !brokerPassword.isNullOrBlank()) {
+            pactDirectory = "$rootDir/pacts"
+            pactBrokerUrl = brokerUrl
+            pactBrokerUsername = brokerUsername
+            pactBrokerPassword = brokerPassword        
         }
-
-        pactDirectory = "$rootDir/pacts"
-        pactBrokerUrl = brokerUrl
-        pactBrokerUsername = brokerUsername
-        pactBrokerPassword = brokerPassword
     })
 }
 
