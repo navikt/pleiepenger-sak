@@ -1,0 +1,74 @@
+{
+    "provider": {
+        "name": "sak"
+    },
+    "consumer": {
+        "name": "pleiepenger-sak"
+    },
+    "interactions": [
+        {
+            "description": "Request for aa opprette ny sak",
+            "request": {
+                "method": "POST",
+                "path": "/api/v1/saker",
+                "headers": {
+                    "Authorization": "Bearer =_.I$",
+                    "Accept": "application/json",
+                    "X-Correlation-ID": "b8ef4db54b-aeaa-bcc9-cf54-bf084ef8a257bb",
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "tema": "OMS",
+                    "applikasjon": "FS22",
+                    "aktoerId": "1831212532188",
+                    "orgnr": null,
+                    "fagsakNr": null
+                },
+                "matchingRules": {
+                    "header": {
+                        "Authorization": {
+                            "matchers": [
+                                {
+                                    "match": "regex",
+                                    "regex": "Bearer [A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.?[A-Za-z0-9-_.+/=]*$"
+                                }
+                            ],
+                            "combine": "AND"
+                        },
+                        "X-Correlation-ID": {
+                            "matchers": [
+                                {
+                                    "match": "regex",
+                                    "regex": "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b"
+                                }
+                            ],
+                            "combine": "AND"
+                        }
+                    }
+                }
+            },
+            "response": {
+                "status": 201,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": {
+                    "id": "137662692"
+                }
+            },
+            "providerStates": [
+                {
+                    "name": "Klar for aa opprette nye saker"
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "pactSpecification": {
+            "version": "3.0.0"
+        },
+        "pact-jvm": {
+            "version": "3.6.2"
+        }
+    }
+}
