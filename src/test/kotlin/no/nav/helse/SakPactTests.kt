@@ -33,6 +33,7 @@ private const val consumer = "pleiepenger-sak"
 private const val jwt = "dummy"
 private const val aktoerId = "1831212532188"
 private const val sakId = "137662692"
+private const val correlationId = "50e93afa-a22d-448a-8fbe-a4a4dae67eb0"
 
 private val logger: Logger = LoggerFactory.getLogger("nav.SakPactTests")
 
@@ -52,7 +53,7 @@ class SakPactTests {
         val requestBody = PactDslJsonBody()
             .stringValue("tema", "OMS")
             .stringValue("applikasjon", "FS22")
-            .stringMatcher("aktoerId", "\\d+", "1831212532188")
+            .stringMatcher("aktoerId", "\\d+", aktoerId)
 
         val headers = mapOf(
             Pair(HttpHeaders.ContentType, "application/json"),
@@ -68,14 +69,15 @@ class SakPactTests {
             .headers(headers)
             .matchHeader(
                 HttpHeaders.XCorrelationId,
-                "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b"
+                "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b",
+                correlationId
             )
             .body(requestBody)
             .willRespondWith()
             .headers(mapOf(Pair(HttpHeaders.ContentType, "application/json")))
             .status(201)
             .body(
-                PactDslJsonBody().stringMatcher("id", "\\d+", "137662692")
+                PactDslJsonBody().stringMatcher("id", "\\d+", sakId)
             )
             .toPact()
     }
@@ -89,7 +91,7 @@ class SakPactTests {
                 melding = MeldingV1(aktoerId = aktoerId),
                 metaData = MetadataV1(
                     version = 1,
-                    correlationId = UUID.randomUUID().toString(),
+                    correlationId = correlationId,
                     requestId = UUID.randomUUID().toString()
                 )
             )
@@ -131,4 +133,10 @@ class SakPactTests {
     }
 }
 
+fun main(args: Array<String>) {
+    val reqid = UUID.randomUUID().toString()
+    println("reqid = ${reqid}")
+    val corrid = UUID.randomUUID().toString()
+    println("corrid = $corrid")
+}
 
