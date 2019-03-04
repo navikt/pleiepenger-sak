@@ -12,17 +12,15 @@
                 "method": "POST",
                 "path": "/api/v1/saker",
                 "headers": {
-                    "Authorization": "Bearer eyJraWQiOiJhN2YzMTI1YS1hYTY4LTRjOTItYWVmNy01OTcwNGZjNTVjOWYiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJzcnZwbGVpZXBlbmdlci1zYWsiLCJhdWQiOlsic3J2cGxlaWVwZW5nZXItc2FrIiwicHJlcHJvZC5sb2NhbCJdLCJ2ZXIiOiIxLjAiLCJuYmYiOjE1NTEyNzA5NjMsImF6cCI6InNydnBsZWllcGVuZ2VyLXNhayIsImlkZW50VHlwZSI6IlN5c3RlbXJlc3N1cnMiLCJhdXRoX3RpbWUiOjE1NTEyNzA5NjMsImlzcyI6Imh0dHBzOlwvXC9zZWN1cml0eS10b2tlbi1zZXJ2aWNlLm5haXMucHJlcHJvZC5sb2NhbCIsImV4cCI6MTU1MTI3NDU2MywiaWF0IjoxNTUxMjcwOTYzLCJqdGkiOiJiY2M1NGVjOS05ZGU1LTRiOGQtYjRlZi1kMjY0NTQxZDBiZWQifQ.dqW2eWzFrkwIpLqP_k5PA6wA1hlaaWV9MbtpZMWJHn01ar5hTPDulAY__Rm1WoB33t3ucqaO_dLcWC6ISBfNIkd9wmb590Aa57D8OcDNwp9D4qPnXczqD3VD5nMspvf4bfztvWxf3MvHYlZX5J9QILedYk1Qx2Mb-epBQRjbCOKtykCwckUvcTFYqflfVbi8-9mhtSGUYO_zdPL-lbvUSDDwyVfXGsVmjabiCVTo46NCcQotHxWxV3OrtojdNyh_RZNEWrt8QubC3WbxcOiZnoX-9D0JMqng6WXFbXoypj_VnErVlAJObLKOtzJA7l3kfJ9cdZEt547i2j97oz360Q",
+                    "Authorization": "Bearer dummy",
                     "Accept": "application/json",
-                    "X-Correlation-ID": "b8c764acfb-0a04-fd3b-c1db-bc3782890ea1cb",
+                    "X-Correlation-ID": "bfc8ee207b-e98f-670e-76e4-b01ae95cefd66b",
                     "Content-Type": "application/json"
                 },
                 "body": {
-                    "tema": "OMS",
                     "applikasjon": "FS22",
-                    "aktoerId": "1831212532188",
-                    "orgnr": null,
-                    "fagsakNr": null
+                    "tema": "OMS",
+                    "aktoerId": "1831212532188"
                 },
                 "matchingRules": {
                     "header": {
@@ -31,6 +29,17 @@
                                 {
                                     "match": "regex",
                                     "regex": "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b"
+                                }
+                            ],
+                            "combine": "AND"
+                        }
+                    },
+                    "body": {
+                        "$.aktoerId": {
+                            "matchers": [
+                                {
+                                    "match": "regex",
+                                    "regex": "\\d+"
                                 }
                             ],
                             "combine": "AND"
@@ -45,6 +54,19 @@
                 },
                 "body": {
                     "id": "137662692"
+                },
+                "matchingRules": {
+                    "body": {
+                        "$.id": {
+                            "matchers": [
+                                {
+                                    "match": "regex",
+                                    "regex": "\\d+"
+                                }
+                            ],
+                            "combine": "AND"
+                        }
+                    }
                 }
             },
             "providerStates": [

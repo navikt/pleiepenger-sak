@@ -6,6 +6,7 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.model.RequestResponsePact
 import org.junit.Rule
 import au.com.dius.pact.consumer.PactVerification
+import au.com.dius.pact.consumer.dsl.PactDslJsonBody
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.apache.Apache
 import io.ktor.client.features.json.JacksonSerializer
@@ -29,7 +30,7 @@ import kotlin.test.assertEquals
 
 private const val provider = "sak"
 private const val consumer = "pleiepenger-sak"
-private const val jwt = "eyJraWQiOiJhN2YzMTI1YS1hYTY4LTRjOTItYWVmNy01OTcwNGZjNTVjOWYiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJzcnZwbGVpZXBlbmdlci1zYWsiLCJhdWQiOlsic3J2cGxlaWVwZW5nZXItc2FrIiwicHJlcHJvZC5sb2NhbCJdLCJ2ZXIiOiIxLjAiLCJuYmYiOjE1NTEyNzA5NjMsImF6cCI6InNydnBsZWllcGVuZ2VyLXNhayIsImlkZW50VHlwZSI6IlN5c3RlbXJlc3N1cnMiLCJhdXRoX3RpbWUiOjE1NTEyNzA5NjMsImlzcyI6Imh0dHBzOlwvXC9zZWN1cml0eS10b2tlbi1zZXJ2aWNlLm5haXMucHJlcHJvZC5sb2NhbCIsImV4cCI6MTU1MTI3NDU2MywiaWF0IjoxNTUxMjcwOTYzLCJqdGkiOiJiY2M1NGVjOS05ZGU1LTRiOGQtYjRlZi1kMjY0NTQxZDBiZWQifQ.dqW2eWzFrkwIpLqP_k5PA6wA1hlaaWV9MbtpZMWJHn01ar5hTPDulAY__Rm1WoB33t3ucqaO_dLcWC6ISBfNIkd9wmb590Aa57D8OcDNwp9D4qPnXczqD3VD5nMspvf4bfztvWxf3MvHYlZX5J9QILedYk1Qx2Mb-epBQRjbCOKtykCwckUvcTFYqflfVbi8-9mhtSGUYO_zdPL-lbvUSDDwyVfXGsVmjabiCVTo46NCcQotHxWxV3OrtojdNyh_RZNEWrt8QubC3WbxcOiZnoX-9D0JMqng6WXFbXoypj_VnErVlAJObLKOtzJA7l3kfJ9cdZEt547i2j97oz360Q"
+private const val jwt = "dummy"
 private const val aktoerId = "1831212532188"
 private const val sakId = "137662692"
 
@@ -47,17 +48,12 @@ class SakPactTests {
     @Pact(consumer = consumer)
     @SuppressWarnings("unused")
     fun oppretteSakPact(builder: PactDslWithProvider): RequestResponsePact {
-        val body = """
-        {
-            "tema" : "OMS",
-            "applikasjon" : "FS22",
-            "aktoerId" : "$aktoerId",
-            "orgnr" : null,
-            "fagsakNr" : null
-        }
-        """.trimIndent()
 
-        logger.info("Body=$body")
+        val requestBody = PactDslJsonBody()
+            .stringValue("tema", "OMS")
+            .stringValue("applikasjon", "FS22")
+            .stringMatcher("aktoerId", "\\d+", "1831212532188")
+
         val headers = mapOf(
             Pair(HttpHeaders.ContentType, "application/json"),
             Pair(HttpHeaders.Accept, "application/json"),
@@ -74,16 +70,12 @@ class SakPactTests {
                 HttpHeaders.XCorrelationId,
                 "\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b"
             )
-            .body(body)
+            .body(requestBody)
             .willRespondWith()
             .headers(mapOf(Pair(HttpHeaders.ContentType, "application/json")))
             .status(201)
             .body(
-                """
-                {
-                    "id": "$sakId"
-                }
-            """.trimIndent()
+                PactDslJsonBody().stringMatcher("id", "\\d+", "137662692")
             )
             .toPact()
     }
