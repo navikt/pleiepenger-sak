@@ -132,11 +132,3 @@ class SakPactTests {
         return mock
     }
 }
-
-fun main(args: Array<String>) {
-    val reqid = UUID.randomUUID().toString()
-    println("reqid = ${reqid}")
-    val corrid = UUID.randomUUID().toString()
-    println("corrid = $corrid")
-}
-
