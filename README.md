@@ -1,5 +1,8 @@
 # pleiepenger-sak
 
+## Archived
+Dette prosjektet er ikke i bruk da sak opprettes i Gosys av saksbehandler.
+
 Inneholder integrasjon mot sak for å opprette sak i forbindelse med søknad om Pleiepenger.
 Skal konsumere fra kafka-topic og opprette sak. Videre skal den legge en ny entry på en annen Topic for å opprette en jorunalføring (pleiepenger-joark)
 Kan også sende samme request som kommer på kafka-topic som et REST API-kall til tjenesten.
@@ -48,4 +51,4 @@ export PACT_BROKER_PASSWORD=
 
 ## For NAV-ansatte
 
-Interne henvendelser kan sendes via Slack i kanalen #område-helse.
+Interne henvendelser kan sendes via Slack i kanalen #team-düsseldorf.
